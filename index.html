@@ -1,0 +1,655 @@
+
+
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Smart Study AI & AR</title>
+
+<style>
+
+* {
+
+  box-sizing: border-box;
+
+  font-family: Arial, sans-serif;
+
+}
+
+body {
+
+  margin: 0;
+
+  background:
+
+    radial-gradient(ellipse at 15% 15%, #533477 0%, transparent 45%),
+
+    radial-gradient(ellipse at 85% 45%, #39234f 0%, transparent 48%),
+
+    radial-gradient(ellipse at 30% 90%, #593b75 0%, transparent 40%),
+
+    #100d17;
+
+  color: #f5efff;
+
+}
+
+header {
+
+  background: linear-gradient(120deg, #21152e, #7650a0, #332044);
+
+  color: white;
+
+  padding: 25px 18px;
+
+  border-radius: 0 0 25px 25px;
+
+  border-bottom: 2px solid #a987d5;
+
+}
+
+header h1 {
+
+  margin: 0 0 10px;
+
+  font-size: 24px;
+
+}
+
+header p {
+
+  margin: 0;
+
+  opacity: .9;
+
+}
+
+.container {
+
+  padding: 20px;
+
+  max-width: 750px;
+
+  margin: auto;
+
+}
+
+.stats {
+
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 12px;
+
+  margin: 18px 0;
+
+}
+
+.stat, .panel {
+
+  background: linear-gradient(145deg, #251b32, #352440);
+
+  border: 1px solid #684c83;
+
+  border-radius: 16px;
+
+  padding: 18px;
+
+  box-shadow: 0 5px 18px #00000035;
+
+}
+
+.stat strong {
+
+  display: block;
+
+  font-size: 25px;
+
+  color: #c5a2ef;
+
+  margin-top: 8px;
+
+}
+
+h2 {
+
+  font-size: 19px;
+
+  color: #d7b9ff;
+
+}
+
+input, select {
+
+  width: 100%;
+
+  padding: 13px;
+
+  border: 1px solid #82669d;
+
+  border-radius: 10px;
+
+  margin: 7px 0;
+
+  background: #181320;
+
+  color: white;
+
+}
+
+input::placeholder {
+
+  color: #b9a8c9;
+
+}
+
+input[type="date"] {
+
+  color-scheme: dark;
+
+}
+
+button {
+
+  background: #8056aa;
+
+  color: white;
+
+  border: none;
+
+  border-radius: 10px;
+
+  padding: 13px;
+
+  width: 100%;
+
+  cursor: pointer;
+
+  margin-top: 8px;
+
+  font-size: 15px;
+
+}
+
+.task {
+
+  background: #21192b;
+
+  padding: 13px;
+
+  border-radius: 12px;
+
+  margin: 10px 0;
+
+  border-right: 4px solid #b18bdf;
+
+}
+
+.task small {
+
+  display: block;
+
+  margin-top: 7px;
+
+  color: #c5b4d5;
+
+}
+
+.task button {
+
+  width: auto;
+
+  padding: 8px 12px;
+
+  font-size: 12px;
+
+}
+
+.done {
+
+  opacity: .55;
+
+  text-decoration: line-through;
+
+}
+
+.ai {
+
+  background: #302340;
+
+  border: 1px solid #765596;
+
+  padding: 16px;
+
+  border-radius: 14px;
+
+  line-height: 1.8;
+
+}
+
+.ar {
+
+  text-align: center;
+
+  border: 2px dashed #a987d5;
+
+  padding: 25px;
+
+  border-radius: 16px;
+
+  background: #21192b;
+
+}
+
+.final-page {
+
+  margin-top: 25px;
+
+  padding: 23px;
+
+  border-radius: 18px;
+
+  background: linear-gradient(145deg, #21152e, #49305e, #251b35);
+
+  border: 1px solid #a987d5;
+
+  box-shadow: 0 5px 25px #00000050;
+
+  line-height: 2;
+
+}
+
+.final-page h2 {
+
+  text-align: center;
+
+  margin-bottom: 25px;
+
+  color: #dfc5ff;
+
+}
+
+.final-page p {
+
+  color: #f5efff;
+
+  margin-bottom: 20px;
+
+}
+
+footer {
+
+  text-align: center;
+
+  padding: 25px;
+
+  color: #bba8cf;
+
+  font-size: 13px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+  <h1>📚 Smart Study AI & AR</h1>
+
+  <p>نظّمي دراستك بطريقة أذكى وأسهل ✨</p>
+
+</header>
+
+<div class="container">
+
+  <div class="stats">
+
+    <div class="stat">
+
+      📋 إجمالي المهام
+
+      <strong id="total">0</strong>
+
+    </div>
+
+    <div class="stat">
+
+      ✅ المهام المكتملة
+
+      <strong id="completed">0</strong>
+
+    </div>
+
+  </div>
+
+  <div class="panel">
+
+    <h2>➕ إضافة مهمة دراسية</h2>
+
+    <input id="taskName" placeholder="اسم الواجب أو الاختبار">
+
+    <input id="subject" placeholder="اسم المادة">
+
+    <label>موعد التسليم:</label>
+
+    <input id="deadline" type="date">
+
+    <select id="priority">
+
+      <option value="high">أولوية عالية</option>
+
+      <option value="medium">أولوية متوسطة</option>
+
+      <option value="low">أولوية منخفضة</option>
+
+    </select>
+
+    <button onclick="addTask()">إضافة المهمة</button>
+
+  </div>
+
+  <div class="panel">
+
+    <h2>🤖 مساعدك الذكي AI</h2>
+
+    <div class="ai" id="aiMessage">
+
+      أضيفي مهامك الدراسية وسأساعدك في ترتيب أولوياتها حسب المواعيد والأهمية.
+
+    </div>
+
+    <button onclick="smartOrganize()">تحليل المهام وترتيبها ✨</button>
+
+  </div>
+
+  <div class="panel">
+
+    <h2>📌 مهامي الدراسية</h2>
+
+    <div id="taskList"></div>
+
+  </div>
+
+  <div class="panel">
+
+    <h2>🥽 تجربة الواقع المعزز AR</h2>
+
+    <div class="ar">
+
+      <div style="font-size:40px">📱</div>
+
+      <p>اكتشفي مهامك الدراسية بطريقة تفاعلية</p>
+
+      <button onclick="alert('سيتم تفعيل تجربة الواقع المعزز في المرحلة القادمة!')">
+
+        ابدأ تجربة AR
+
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- الصفحة الأخيرة -->
+
+  <div class="final-page">
+
+    <p style="text-align:center; color:#c5a2ef; font-size:14px;">
+
+      الذكاء الاصطناعي كما نراه✨
+
+    </p>
+
+    <h2>الذكاء الاصطناعي وتجربتي</h2>
+
+    <p>
+
+      ١- الذكاء الاصطناعي من وجهة نظري:<br>
+
+      هو اداة لتسهيل التعلم فقط ، ولايمكن الاعتماد علية بشكل كلي في حياتنا
+
+    </p>
+
+    <p>
+
+      ٢- اين يوجد الذكاء الاصطناعي من حولنا:<br>
+
+      في تجربتي chat gpt كان مساعد لي في كتابة الاكواد وتصميم الموقع
+
+    </p>
+
+    <p>
+
+      ٣- ماالذي اثار فضولي:<br>
+
+      الادوات الي استخدمتها مثل: mind AR
+
+    </p>
+
+    <p>
+
+      ٤- كيف ساعدني AI في إنجاز المهمه<br>
+
+      الفكرة كاملة من عندي لكن التنسيق وكتابة الاكواد بمساعدتة
+
+    </p>
+
+  </div>
+
+</div>
+
+<footer>
+
+  Smart Study AI & AR © 2026
+
+</footer>
+
+<script>
+
+let tasks = JSON.parse(localStorage.getItem("studyTasks") || "[]");
+
+function saveTasks() {
+
+  localStorage.setItem("studyTasks", JSON.stringify(tasks));
+
+}
+
+function addTask() {
+
+  const name = document.getElementById("taskName").value.trim();
+
+  const subject = document.getElementById("subject").value.trim();
+
+  const deadline = document.getElementById("deadline").value;
+
+  const priority = document.getElementById("priority").value;
+
+  if (!name || !subject || !deadline) {
+
+    alert("فضلاً أدخلي جميع بيانات المهمة");
+
+    return;
+
+  }
+
+  tasks.push({
+
+    id: Date.now(),
+
+    name,
+
+    subject,
+
+    deadline,
+
+    priority,
+
+    done: false
+
+  });
+
+  saveTasks();
+
+  renderTasks();
+
+  document.getElementById("taskName").value = "";
+
+  document.getElementById("subject").value = "";
+
+  document.getElementById("deadline").value = "";
+
+}
+
+function smartOrganize() {
+
+  const today = new Date();
+
+  today.setHours(0,0,0,0);
+
+  tasks.sort((a,b) => {
+
+    const score = t => {
+
+      const days = Math.ceil(
+
+        (new Date(t.deadline + "T00:00:00") - today) / 86400000
+
+      );
+
+      const urgency = days <= 1 ? 100 : days <= 3 ? 50 : days <= 7 ? 20 : 0;
+
+      const importance = {high: 30, medium: 15, low: 5}[t.priority];
+
+      return urgency + importance;
+
+    };
+
+    return score(b) - score(a);
+
+  });
+
+  saveTasks();
+
+  renderTasks();
+
+  const pending = tasks.filter(t => !t.done);
+
+  if (pending.length) {
+
+    document.getElementById("aiMessage").innerText =
+
+      "📌 المهمة التي تستحق اهتمامك أولاً: " +
+
+      pending[0].name + " (" + pending[0].subject + "). " +
+
+      "تم ترتيب مهامك حسب قرب موعد التسليم والأولوية.";
+
+  } else {
+
+    document.getElementById("aiMessage").innerText =
+
+      "رائع! لا توجد مهام غير مكتملة حالياً.";
+
+  }
+
+}
+
+function toggleTask(id) {
+
+  tasks = tasks.map(t =>
+
+    t.id === id ? {...t, done: !t.done} : t
+
+  );
+
+  saveTasks();
+
+  renderTasks();
+
+}
+
+function deleteTask(id) {
+
+  tasks = tasks.filter(t => t.id !== id);
+
+  saveTasks();
+
+  renderTasks();
+
+}
+
+function renderTasks() {
+
+  const list = document.getElementById("taskList");
+
+  list.innerHTML = "";
+
+  tasks.forEach(t => {
+
+    const item = document.createElement("div");
+
+    item.className = "task";
+
+    const name = document.createElement("strong");
+
+    name.textContent = t.name;
+
+    const details = document.createElement("small");
+
+    details.textContent = t.subject + " | التسليم: " + t.deadline;
+
+    const status = document.createElement("small");
+
+    status.textContent = t.done ? "مكتملة" :
+
+      t.priority === "high" ? "أولوية عالية" :
+
+      t.priority === "medium" ? "أولوية متوسطة" : "أولوية منخفضة";
+
+    if (t.done) item.classList.add("done");
+
+    const complete = document.createElement("button");
+
+    complete.textContent = t.done ? "إلغاء الإنجاز" : "تم الإنجاز";
+
+    complete.onclick = () => toggleTask(t.id);
+
+    const remove = document.createElement("button");
+
+    remove.textContent = "حذف";
+
+    remove.style.background = "#a66b80";
+
+    remove.onclick = () => deleteTask(t.id);
+
+    item.append(name, details, status, complete, remove);
+
+    list.appendChild(item);
+
+  });
+
+  document.getElementById("total").textContent = tasks.length;
+
+  document.getElementById("completed").textContent =
+
+    tasks.filter(t => t.done).length;
+
+}
+
+renderTasks();
+
+</script>
+
+</body>
+
+</html>
