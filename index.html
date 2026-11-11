@@ -4,13 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Smart Study AI & AR</title>
-
 <style>
 * {
   box-sizing: border-box;
   font-family: Arial, sans-serif;
 }
-
 body {
   margin: 0;
   background:
@@ -20,7 +18,6 @@ body {
     #100d17;
   color: #f5efff;
 }
-
 header {
   background: linear-gradient(120deg, #21152e, #7650a0, #332044);
   color: white;
@@ -28,30 +25,25 @@ header {
   border-radius: 0 0 25px 25px;
   border-bottom: 2px solid #a987d5;
 }
-
 header h1 {
   margin: 0 0 10px;
   font-size: 24px;
 }
-
 header p {
   margin: 0;
   opacity: .9;
 }
-
 .container {
   padding: 20px;
   max-width: 750px;
   margin: auto;
 }
-
 .stats {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
   margin: 18px 0;
 }
-
 .stat, .panel {
   background: linear-gradient(145deg, #251b32, #352440);
   border: 1px solid #684c83;
@@ -59,19 +51,16 @@ header p {
   padding: 18px;
   box-shadow: 0 5px 18px #00000035;
 }
-
 .stat strong {
   display: block;
   font-size: 25px;
   color: #c5a2ef;
   margin-top: 8px;
 }
-
 h2 {
   font-size: 19px;
   color: #d7b9ff;
 }
-
 input, select {
   width: 100%;
   padding: 13px;
@@ -81,15 +70,12 @@ input, select {
   background: #181320;
   color: white;
 }
-
 input::placeholder {
   color: #b9a8c9;
 }
-
 input[type="date"] {
   color-scheme: dark;
 }
-
 button, .save-image {
   display: inline-block;
   background: #8056aa;
@@ -104,12 +90,10 @@ button, .save-image {
   text-align: center;
   text-decoration: none;
 }
-
 button:disabled {
   opacity: .6;
   cursor: wait;
 }
-
 .task {
   background: #21192b;
   padding: 13px;
@@ -117,24 +101,20 @@ button:disabled {
   margin: 10px 0;
   border-right: 4px solid #b18bdf;
 }
-
 .task small {
   display: block;
   margin-top: 7px;
   color: #c5b4d5;
 }
-
 .task button {
   width: auto;
   padding: 8px 12px;
   font-size: 12px;
 }
-
 .done {
   opacity: .55;
   text-decoration: line-through;
 }
-
 .ai {
   background: #302340;
   border: 1px solid #765596;
@@ -142,7 +122,6 @@ button:disabled {
   border-radius: 14px;
   line-height: 1.8;
 }
-
 .ar {
   text-align: center;
   border: 2px dashed #a987d5;
@@ -150,7 +129,6 @@ button:disabled {
   border-radius: 16px;
   background: #21192b;
 }
-
 .marker-image {
   width: 100%;
   max-width: 440px;
@@ -159,7 +137,6 @@ button:disabled {
   border-radius: 12px;
   border: 2px solid #a987d5;
 }
-
 #ar-container {
   display: none;
   width: 100%;
@@ -171,13 +148,11 @@ button:disabled {
   background: #100d17;
   position: relative;
 }
-
 #ar-container canvas {
   width: 100%;
   height: 100%;
   display: block;
 }
-
 #arStatus {
   color: #d7b9ff;
   font-size: 14px;
@@ -185,7 +160,6 @@ button:disabled {
   line-height: 1.8;
   overflow-wrap: anywhere;
 }
-
 .final-page {
   margin-top: 25px;
   padding: 23px;
@@ -195,18 +169,15 @@ button:disabled {
   box-shadow: 0 5px 25px #00000050;
   line-height: 2;
 }
-
 .final-page h2 {
   text-align: center;
   margin-bottom: 25px;
   color: #dfc5ff;
 }
-
 .final-page p {
   color: #f5efff;
   margin-bottom: 20px;
 }
-
 footer {
   text-align: center;
   padding: 25px;
@@ -215,7 +186,6 @@ footer {
 }
 </style>
 
-<!-- مكتبات الواقع المعزز -->
 <script type="importmap">
 {
   "imports": {
@@ -225,7 +195,6 @@ footer {
   }
 }
 </script>
-
 </head>
 
 <body>
@@ -242,7 +211,6 @@ footer {
       📋 إجمالي المهام
       <strong id="total">0</strong>
     </div>
-
     <div class="stat">
       ✅ المهام المكتملة
       <strong id="completed">0</strong>
@@ -251,29 +219,23 @@ footer {
 
   <div class="panel">
     <h2>➕ إضافة مهمة دراسية</h2>
-
     <input id="taskName" placeholder="اسم الواجب أو الاختبار">
     <input id="subject" placeholder="اسم المادة">
-
     <label>موعد التسليم:</label>
     <input id="deadline" type="date">
-
     <select id="priority">
       <option value="high">أولوية عالية</option>
       <option value="medium">أولوية متوسطة</option>
       <option value="low">أولوية منخفضة</option>
     </select>
-
     <button onclick="addTask()">إضافة المهمة</button>
   </div>
 
   <div class="panel">
     <h2>🤖 مساعدك الذكي AI</h2>
-
     <div class="ai" id="aiMessage">
       أضيفي مهامك الدراسية وسأساعدك في ترتيب أولوياتها حسب المواعيد والأهمية.
     </div>
-
     <button onclick="smartOrganize()">تحليل المهام وترتيبها ✨</button>
   </div>
 
@@ -282,13 +244,9 @@ footer {
     <div id="taskList"></div>
   </div>
 
-  <!-- تجربة الواقع المعزز -->
-
   <div class="panel">
     <h2>🥽 تجربة الواقع المعزز AR</h2>
-
     <div class="ar">
-
       <p>أولاً: احفظي صورة العلامة أو اعرضيها على جهاز آخر.</p>
 
       <img
@@ -323,16 +281,12 @@ footer {
       <div id="arStatus">
         اضغطي على ابدئي تجربة AR للسماح باستخدام الكاميرا.
       </div>
-
     </div>
 
     <div id="ar-container"></div>
   </div>
 
-  <!-- صفحة الذكاء الاصطناعي -->
-
   <div class="final-page">
-
     <p style="text-align:center; color:#c5a2ef; font-size:14px;">
       الذكاء الاصطناعي كما نراه✨
     </p>
@@ -358,7 +312,6 @@ footer {
       ٤- كيف ساعدني AI في إنجاز المهمة:<br>
       الفكرة كاملة من عندي، لكن ساعدني في التنسيق وكتابة الأكواد.
     </p>
-
   </div>
 
 </div>
@@ -372,17 +325,13 @@ footer {
 import * as THREE from "three";
 import { MindARThree } from "mindar-image-three";
 
-/* =========================
-   نظام المهام الدراسية
-========================= */
+/* نظام المهام الدراسية */
 
 let tasks = [];
 
 try {
   tasks = JSON.parse(localStorage.getItem("studyTasks") || "[]");
-
   if (!Array.isArray(tasks)) tasks = [];
-
 } catch (error) {
   tasks = [];
 }
@@ -420,34 +369,29 @@ function addTask() {
   document.getElementById("deadline").value = "";
 }
 
+/* تعديل المساعد الذكي AI */
+
 function smartOrganize() {
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const priorityRank = {
+    high: 3,
+    medium: 2,
+    low: 1
+  };
 
   tasks.sort((a, b) => {
 
-    const score = t => {
+    // ترتيب حسب الأولوية أولاً
+    const priorityDifference =
+      priorityRank[b.priority] - priorityRank[a.priority];
 
-      const days = Math.ceil(
-        (new Date(t.deadline + "T00:00:00") - today) / 86400000
-      );
+    if (priorityDifference !== 0) {
+      return priorityDifference;
+    }
 
-      const urgency =
-        days <= 1 ? 100 :
-        days <= 3 ? 50 :
-        days <= 7 ? 20 : 0;
+    // عند تساوي الأولوية: الأقرب موعداً أولاً
+    return new Date(a.deadline) - new Date(b.deadline);
 
-      const importance = {
-        high: 30,
-        medium: 15,
-        low: 5
-      }[t.priority] || 0;
-
-      return urgency + importance;
-    };
-
-    return score(b) - score(a);
   });
 
   saveTasks();
@@ -457,15 +401,26 @@ function smartOrganize() {
 
   if (pending.length) {
 
+    const first = pending[0];
+
+    const priorityText = {
+      high: "عالية",
+      medium: "متوسطة",
+      low: "منخفضة"
+    }[first.priority];
+
     document.getElementById("aiMessage").innerText =
-      "📌 المهمة التي تستحق اهتمامك أولاً: " +
-      pending[0].name + " (" + pending[0].subject + "). " +
-      "تم ترتيب مهامك حسب قرب موعد التسليم والأولوية.";
+      "🤖 تم تحليل مهامك وترتيبها بنجاح! " +
+      "📌 أول مهمة تستحق اهتمامك: " + first.name +
+      " | المادة: " + first.subject +
+      " | الأولوية: " + priorityText +
+      " | موعد التسليم: " + first.deadline;
 
   } else {
 
     document.getElementById("aiMessage").innerText =
       "رائع! لا توجد مهام غير مكتملة حالياً.";
+
   }
 }
 
@@ -513,19 +468,17 @@ function renderTasks() {
     if (t.done) item.classList.add("done");
 
     const complete = document.createElement("button");
-
     complete.textContent = t.done ? "إلغاء الإنجاز" : "تم الإنجاز";
     complete.onclick = () => toggleTask(t.id);
 
     const remove = document.createElement("button");
-
     remove.textContent = "حذف";
     remove.style.background = "#a66b80";
     remove.onclick = () => deleteTask(t.id);
 
     item.append(name, details, status, complete, remove);
-
     list.appendChild(item);
+
   });
 
   document.getElementById("total").textContent = tasks.length;
@@ -536,13 +489,10 @@ function renderTasks() {
   updateARDashboard();
 }
 
-/* =========================
-   الواقع المعزز AR
-========================= */
+/* الواقع المعزز AR */
 
 let mindarThree = null;
 let arStarted = false;
-
 let dashboardTexture = null;
 let dashboardCanvas = null;
 let dashboardContext = null;
@@ -556,7 +506,6 @@ function updateARDashboard() {
   ctx.clearRect(0, 0, 1024, 640);
 
   const gradient = ctx.createLinearGradient(0, 0, 1024, 640);
-
   gradient.addColorStop(0, "#241633");
   gradient.addColorStop(1, "#593b75");
 
@@ -565,7 +514,6 @@ function updateARDashboard() {
 
   ctx.direction = "rtl";
   ctx.textAlign = "center";
-
   ctx.fillStyle = "#ffffff";
   ctx.font = "bold 54px Arial";
   ctx.fillText("Smart Study AI", 512, 85);
@@ -660,13 +608,9 @@ async function startAR() {
   try {
 
     mindarThree = new MindARThree({
-
       container: container,
-
       imageTargetSrc: "./targets.mind",
-
       maxTrack: 1
-
     });
 
     const {renderer, scene, camera} = mindarThree;
@@ -674,29 +618,26 @@ async function startAR() {
     const anchor = mindarThree.addAnchor(0);
 
     dashboardCanvas = document.createElement("canvas");
-
     dashboardCanvas.width = 1024;
     dashboardCanvas.height = 640;
 
     dashboardContext = dashboardCanvas.getContext("2d");
 
     dashboardTexture = new THREE.CanvasTexture(dashboardCanvas);
-
     dashboardTexture.colorSpace = THREE.SRGBColorSpace;
 
     const material = new THREE.MeshBasicMaterial({
-
       map: dashboardTexture,
-
       side: THREE.DoubleSide
-
     });
 
-    const geometry = new THREE.PlaneGeometry(1.2, 0.75);
+    /* تعديل المحاذاة والحجم فقط */
+
+    const geometry = new THREE.PlaneGeometry(0.85, 0.53);
 
     const dashboard = new THREE.Mesh(geometry, material);
 
-    dashboard.position.set(0, 0.15, 0.05);
+    dashboard.position.set(0, 0, 0.02);
 
     anchor.group.add(dashboard);
 
@@ -726,7 +667,6 @@ async function startAR() {
       (error.message || "لا توجد تفاصيل إضافية");
 
     container.style.display = "none";
-
     startButton.disabled = false;
 
     if (mindarThree) {
@@ -736,6 +676,7 @@ async function startAR() {
       } catch (e) {
         console.error("Stop error:", e);
       }
+
     }
 
     mindarThree = null;
@@ -754,26 +695,23 @@ async function stopAR() {
   try {
 
     mindarThree.renderer.setAnimationLoop(null);
-
     await mindarThree.stop();
 
   } catch (error) {
 
     console.error(error);
+
   }
 
   mindarThree = null;
   arStarted = false;
-
   dashboardTexture = null;
   dashboardCanvas = null;
   dashboardContext = null;
 
   document.getElementById("ar-container").style.display = "none";
-
   document.getElementById("startAR").style.display = "block";
   document.getElementById("startAR").disabled = false;
-
   document.getElementById("stopAR").style.display = "none";
 
   status.textContent = "تم إيقاف تجربة الواقع المعزز.";
@@ -791,6 +729,5 @@ window.stopAR = stopAR;
 renderTasks();
 
 </script>
-
 </body>
 </html>
