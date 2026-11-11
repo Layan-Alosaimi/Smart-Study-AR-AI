@@ -54,21 +54,9 @@ header {
 
 }
 
-header h1 {
+header h1 { margin: 0 0 10px; font-size: 24px; }
 
-  margin: 0 0 10px;
-
-  font-size: 24px;
-
-}
-
-header p {
-
-  margin: 0;
-
-  opacity: .9;
-
-}
+header p { margin: 0; opacity: .9; }
 
 .container {
 
@@ -118,13 +106,7 @@ header p {
 
 }
 
-h2 {
-
-  font-size: 19px;
-
-  color: #d7b9ff;
-
-}
+h2 { font-size: 19px; color: #d7b9ff; }
 
 input, select {
 
@@ -144,19 +126,13 @@ input, select {
 
 }
 
-input::placeholder {
+input::placeholder { color: #b9a8c9; }
 
-  color: #b9a8c9;
+input[type="date"] { color-scheme: dark; }
 
-}
+button, .save-image {
 
-input[type="date"] {
-
-  color-scheme: dark;
-
-}
-
-button {
+  display: inline-block;
 
   background: #8056aa;
 
@@ -175,6 +151,10 @@ button {
   margin-top: 8px;
 
   font-size: 15px;
+
+  text-align: center;
+
+  text-decoration: none;
 
 }
 
@@ -240,11 +220,71 @@ button {
 
   border: 2px dashed #a987d5;
 
-  padding: 25px;
+  padding: 20px;
 
   border-radius: 16px;
 
   background: #21192b;
+
+}
+
+.marker-image {
+
+  width: 100%;
+
+  max-width: 440px;
+
+  display: block;
+
+  margin: 15px auto;
+
+  border-radius: 12px;
+
+  border: 2px solid #a987d5;
+
+}
+
+#ar-container {
+
+  display: none;
+
+  width: 100%;
+
+  height: 65vh;
+
+  min-height: 350px;
+
+  margin-top: 15px;
+
+  border-radius: 14px;
+
+  overflow: hidden;
+
+  background: #100d17;
+
+  position: relative;
+
+}
+
+#ar-container canvas {
+
+  width: 100%;
+
+  height: 100%;
+
+  display: block;
+
+}
+
+#arStatus {
+
+  color: #d7b9ff;
+
+  font-size: 14px;
+
+  margin-top: 12px;
+
+  line-height: 1.8;
 
 }
 
@@ -297,6 +337,10 @@ footer {
 }
 
 </style>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"></script>
 
 </head>
 
@@ -380,23 +424,65 @@ footer {
 
   </div>
 
+  <!-- تجربة الواقع المعزز -->
+
   <div class="panel">
 
     <h2>🥽 تجربة الواقع المعزز AR</h2>
 
     <div class="ar">
 
-      <div style="font-size:40px">📱</div>
+      <p>أولاً: احفظي صورة العلامة أو اعرضيها على جهاز آخر.</p>
 
-      <p>اكتشفي مهامك الدراسية بطريقة تفاعلية</p>
+      <img
 
-      <button onclick="alert('سيتم تفعيل تجربة الواقع المعزز في المرحلة القادمة!')">
+        class="marker-image"
+
+        src="./a_clean_modern_pastel_purple_themed_ar_marker_an.png"
+
+        alt="Smart Study AR Marker"
+
+      >
+
+      <a
+
+        class="save-image"
+
+        href="./a_clean_modern_pastel_purple_themed_ar_marker_an.png"
+
+        download="Smart-Study-AR.png"
+
+      >
+
+        احفظ الصورة 😊
+
+      </a>
+
+      <p>ثانياً: افتحي الكاميرا ووجّهيها نحو الصورة المحفوظة أو المطبوعة.</p>
+
+      <button id="startAR" onclick="startAR()">
 
         ابدأ تجربة AR
 
       </button>
 
+      <button id="stopAR" onclick="stopAR()"
+
+        style="display:none;background:#a66b80">
+
+        إيقاف الكاميرا
+
+      </button>
+
+      <div id="arStatus">
+
+        اضغطي على ابدأ تجربة AR للسماح باستخدام الكاميرا.
+
+      </div>
+
     </div>
+
+    <div id="ar-container"></div>
 
   </div>
 
@@ -440,7 +526,7 @@ footer {
 
       ٤- كيف ساعدني AI في إنجاز المهمه<br>
 
-      الفكرة كاملة من عندي لكن التنسيق وكتابة الاكواد بمساعدتة
+      الفكرة كاملة من عندي لكن التنسيق وكتابة الاكوادة بمساعدتة
 
     </p>
 
@@ -644,9 +730,291 @@ function renderTasks() {
 
     tasks.filter(t => t.done).length;
 
+  updateARDashboard();
+
 }
 
 renderTasks();
+
+// الواقع المعزز AR
+
+let mindarThree = null;
+
+let arStarted = false;
+
+let dashboardTexture = null;
+
+let dashboardCanvas = null;
+
+let dashboardContext = null;
+
+function updateARDashboard() {
+
+  if (!dashboardCanvas || !dashboardContext || !dashboardTexture) return;
+
+  const ctx = dashboardContext;
+
+  ctx.clearRect(0, 0, 1024, 640);
+
+  const gradient = ctx.createLinearGradient(0, 0, 1024, 640);
+
+  gradient.addColorStop(0, "#241633");
+
+  gradient.addColorStop(1, "#593b75");
+
+  ctx.fillStyle = gradient;
+
+  ctx.fillRect(0, 0, 1024, 640);
+
+  ctx.direction = "rtl";
+
+  ctx.textAlign = "center";
+
+  ctx.fillStyle = "#ffffff";
+
+  ctx.font = "bold 54px Arial";
+
+  ctx.fillText("Smart Study AI", 512, 85);
+
+  ctx.font = "32px Arial";
+
+  ctx.fillStyle = "#e1c9ff";
+
+  ctx.fillText("مهامي الدراسية", 512, 135);
+
+  const pending = tasks.filter(t => !t.done);
+
+  const percent = tasks.length
+
+    ? Math.round((tasks.filter(t => t.done).length / tasks.length) * 100)
+
+    : 0;
+
+  ctx.fillStyle = "#d9bdff";
+
+  ctx.font = "bold 42px Arial";
+
+  ctx.fillText("إجمالي المهام: " + tasks.length, 512, 220);
+
+  ctx.fillStyle = "#ffffff";
+
+  ctx.fillText("المهام المتبقية: " + pending.length, 512, 285);
+
+  ctx.fillStyle = "#e7d6ff";
+
+  ctx.fillText("نسبة الإنجاز: " + percent + "%", 512, 350);
+
+  const sorted = [...pending].sort((a, b) =>
+
+    a.deadline.localeCompare(b.deadline)
+
+  );
+
+  ctx.font = "bold 32px Arial";
+
+  ctx.fillStyle = "#f3d4ff";
+
+  ctx.fillText(
+
+    sorted.length
+
+      ? "أقرب مهمة: " + sorted[0].name
+
+      : "أحسنتِ! أنجزتِ جميع مهامك",
+
+    512,
+
+    425
+
+  );
+
+  ctx.font = "27px Arial";
+
+  ctx.fillStyle = "#ffffff";
+
+  sorted.slice(0, 3).forEach((task, index) => {
+
+    ctx.fillText(
+
+      (index + 1) + "- " + task.name + " | " + task.deadline,
+
+      512,
+
+      490 + index * 42
+
+    );
+
+  });
+
+  ctx.font = "24px Arial";
+
+  ctx.fillStyle = "#e1c9ff";
+
+  ctx.fillText("استمري في تحقيق أهدافك", 512, 620);
+
+  dashboardTexture.needsUpdate = true;
+
+}
+
+async function startAR() {
+
+  if (arStarted) return;
+
+  const status = document.getElementById("arStatus");
+
+  const container = document.getElementById("ar-container");
+
+  const startButton = document.getElementById("startAR");
+
+  const stopButton = document.getElementById("stopAR");
+
+  if (!window.MINDAR || !window.THREE) {
+
+    status.textContent = "تعذر تحميل مكتبات AR. تحققي من اتصال الإنترنت.";
+
+    return;
+
+  }
+
+  status.textContent = "جارٍ تشغيل الكاميرا...";
+
+  container.style.display = "block";
+
+  startButton.disabled = true;
+
+  try {
+
+    mindarThree = new window.MINDAR.IMAGE.MindARThree({
+
+      container: container,
+
+      imageTargetSrc: "./targets.mind",
+
+      maxTrack: 1
+
+    });
+
+    const THREE = window.THREE;
+
+    const {renderer, scene, camera} = mindarThree;
+
+    const anchor = mindarThree.addAnchor(0);
+
+    dashboardCanvas = document.createElement("canvas");
+
+    dashboardCanvas.width = 1024;
+
+    dashboardCanvas.height = 640;
+
+    dashboardContext = dashboardCanvas.getContext("2d");
+
+    dashboardTexture = new THREE.CanvasTexture(dashboardCanvas);
+
+    dashboardTexture.colorSpace = THREE.SRGBColorSpace;
+
+    const material = new THREE.MeshBasicMaterial({
+
+      map: dashboardTexture,
+
+      side: THREE.DoubleSide
+
+    });
+
+    const geometry = new THREE.PlaneGeometry(1.2, 0.75);
+
+    const dashboard = new THREE.Mesh(geometry, material);
+
+    dashboard.position.set(0, 0.15, 0.05);
+
+    anchor.group.add(dashboard);
+
+    updateARDashboard();
+
+    await mindarThree.start();
+
+    arStarted = true;
+
+    renderer.setAnimationLoop(() => {
+
+      renderer.render(scene, camera);
+
+    });
+
+    startButton.style.display = "none";
+
+    stopButton.style.display = "block";
+
+    status.textContent =
+
+      "وجّهي الكاميرا نحو صورة Smart Study AI وانتظري ظهور لوحة مهامك 💜";
+
+  } catch (error) {
+
+    console.error(error);
+
+    status.textContent =
+
+      "تعذر تشغيل AR. تأكدي من السماح بالكاميرا ومن وجود targets.mind بجانب index.html.";
+
+    container.style.display = "none";
+
+    startButton.disabled = false;
+
+    if (mindarThree) {
+
+      try {
+
+        await mindarThree.stop();
+
+      } catch (e) {}
+
+      mindarThree = null;
+
+    }
+
+  }
+
+}
+
+async function stopAR() {
+
+  if (!mindarThree) return;
+
+  const status = document.getElementById("arStatus");
+
+  try {
+
+    mindarThree.renderer.setAnimationLoop(null);
+
+    await mindarThree.stop();
+
+  } catch (error) {
+
+    console.error(error);
+
+  }
+
+  mindarThree = null;
+
+  arStarted = false;
+
+  dashboardTexture = null;
+
+  dashboardCanvas = null;
+
+  dashboardContext = null;
+
+  document.getElementById("ar-container").style.display = "none";
+
+  document.getElementById("startAR").style.display = "block";
+
+  document.getElementById("startAR").disabled = false;
+
+  document.getElementById("stopAR").style.display = "none";
+
+  status.textContent = "تم إيقاف تجربة الواقع المعزز.";
+
+}
 
 </script>
 
