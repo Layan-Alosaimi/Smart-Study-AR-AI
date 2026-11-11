@@ -29,8 +29,15 @@ header {
   border-bottom: 2px solid #a987d5;
 }
 
-header h1 { margin: 0 0 10px; font-size: 24px; }
-header p { margin: 0; opacity: .9; }
+header h1 {
+  margin: 0 0 10px;
+  font-size: 24px;
+}
+
+header p {
+  margin: 0;
+  opacity: .9;
+}
 
 .container {
   padding: 20px;
@@ -60,7 +67,10 @@ header p { margin: 0; opacity: .9; }
   margin-top: 8px;
 }
 
-h2 { font-size: 19px; color: #d7b9ff; }
+h2 {
+  font-size: 19px;
+  color: #d7b9ff;
+}
 
 input, select {
   width: 100%;
@@ -72,8 +82,13 @@ input, select {
   color: white;
 }
 
-input::placeholder { color: #b9a8c9; }
-input[type="date"] { color-scheme: dark; }
+input::placeholder {
+  color: #b9a8c9;
+}
+
+input[type="date"] {
+  color-scheme: dark;
+}
 
 button, .save-image {
   display: inline-block;
@@ -199,6 +214,7 @@ footer {
 }
 </style>
 
+<!-- مكتبات الواقع المعزز -->
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"></script>
 </head>
@@ -257,6 +273,7 @@ footer {
     <div id="taskList"></div>
   </div>
 
+  <!-- تجربة الواقع المعزز -->
   <div class="panel">
     <h2>🥽 تجربة الواقع المعزز AR</h2>
 
@@ -272,7 +289,7 @@ footer {
 
       <a
         class="save-image"
-        href="./AB0B665E-BF4F-8F0C-233A720D5616.png"
+        href="./AB0B665E-BF4F-4EC9-8F0C-233A720D5616.png"
         download="Smart-Study-AR.png"
       >
         احفظي الصورة 😊
@@ -284,8 +301,11 @@ footer {
         ابدئي تجربة AR
       </button>
 
-      <button id="stopAR" onclick="stopAR()"
-        style="display:none;background:#a66b80">
+      <button
+        id="stopAR"
+        onclick="stopAR()"
+        style="display:none;background:#a66b80"
+      >
         إيقاف الكاميرا
       </button>
 
@@ -297,6 +317,7 @@ footer {
     <div id="ar-container"></div>
   </div>
 
+  <!-- صفحة الذكاء الاصطناعي -->
   <div class="final-page">
 
     <p style="text-align:center; color:#c5a2ef; font-size:14px;">
@@ -334,7 +355,18 @@ footer {
 </footer>
 
 <script>
-let tasks = JSON.parse(localStorage.getItem("studyTasks") || "[]");
+/* =========================
+   نظام المهام الدراسية
+========================= */
+
+let tasks = [];
+
+try {
+  tasks = JSON.parse(localStorage.getItem("studyTasks") || "[]");
+  if (!Array.isArray(tasks)) tasks = [];
+} catch (error) {
+  tasks = [];
+}
 
 function saveTasks() {
   localStorage.setItem("studyTasks", JSON.stringify(tasks));
@@ -370,16 +402,24 @@ function addTask() {
 
 function smartOrganize() {
   const today = new Date();
-  today.setHours(0,0,0,0);
+  today.setHours(0, 0, 0, 0);
 
-  tasks.sort((a,b) => {
+  tasks.sort((a, b) => {
     const score = t => {
       const days = Math.ceil(
         (new Date(t.deadline + "T00:00:00") - today) / 86400000
       );
 
-      const urgency = days <= 1 ? 100 : days <= 3 ? 50 : days <= 7 ? 20 : 0;
-      const importance = {high: 30, medium: 15, low: 5}[t.priority];
+      const urgency =
+        days <= 1 ? 100 :
+        days <= 3 ? 50 :
+        days <= 7 ? 20 : 0;
+
+      const importance = {
+        high: 30,
+        medium: 15,
+        low: 5
+      }[t.priority] || 0;
 
       return urgency + importance;
     };
@@ -436,7 +476,8 @@ function renderTasks() {
     const status = document.createElement("small");
     status.textContent = t.done ? "مكتملة" :
       t.priority === "high" ? "أولوية عالية" :
-      t.priority === "medium" ? "أولوية متوسطة" : "أولوية منخفضة";
+      t.priority === "medium" ? "أولوية متوسطة" :
+      "أولوية منخفضة";
 
     if (t.done) item.classList.add("done");
 
@@ -454,16 +495,16 @@ function renderTasks() {
   });
 
   document.getElementById("total").textContent = tasks.length;
+
   document.getElementById("completed").textContent =
     tasks.filter(t => t.done).length;
 
   updateARDashboard();
 }
 
-renderTasks();
-
-
-// الواقع المعزز AR
+/* =========================
+   الواقع المعزز AR
+========================= */
 
 let mindarThree = null;
 let arStarted = false;
@@ -545,19 +586,33 @@ function updateARDashboard() {
 }
 
 async function startAR() {
-  if (arStarted) return;
+  if (arStarted || mindarThree) return;
 
   const status = document.getElementById("arStatus");
   const container = document.getElementById("ar-container");
   const startButton = document.getElementById("startAR");
   const stopButton = document.getElementById("stopAR");
 
-  if (!window.MINDAR || !window.THREE) {
-    status.textContent = "تعذر تحميل مكتبات AR. تحققي من اتصال الإنترنت.";
+  if (!window.isSecureContext) {
+    status.textContent =
+      "يجب فتح الموقع من رابط GitHub Pages الآمن HTTPS حتى تعمل الكاميرا.";
     return;
   }
 
-  status.textContent = "جارٍ تشغيل الكاميرا...";
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    status.textContent =
+      "المتصفح لا يتيح تشغيل الكاميرا. افتحي الموقع من Safari مباشرة.";
+    return;
+  }
+
+  if (!window.MINDAR || !window.MINDAR.IMAGE ||
+      !window.MINDAR.IMAGE.MindARThree || !window.THREE) {
+    status.textContent =
+      "لم يتم تحميل مكتبات الواقع المعزز. تأكدي من اتصال الإنترنت ثم أعيدي تحميل الصفحة.";
+    return;
+  }
+
+  status.textContent = "جارٍ تجهيز الكاميرا وتجربة الواقع المعزز...";
   container.style.display = "block";
   startButton.disabled = true;
 
@@ -607,13 +662,25 @@ async function startAR() {
     stopButton.style.display = "block";
 
     status.textContent =
-      "وجّهي الكاميرا نحو صورة Smart Study AI وانتظري ظهور لوحة مهامك 💜";
+      "الكاميرا تعمل! وجّهيها نحو صورة Smart Study AI وانتظري ظهور لوحة مهامك 💜";
 
   } catch (error) {
-    console.error(error);
+    console.error("AR Error:", error);
 
-    status.textContent =
-      "تعذر تشغيل AR. تأكدي من السماح بالكاميرا ومن وجود targets.mind بجانب index.html.";
+    let message = "تعذر تشغيل الكاميرا. ";
+
+    if (error.name === "NotAllowedError" ||
+        error.name === "PermissionDeniedError") {
+      message += "تأكدي من السماح لـ Safari باستخدام الكاميرا من إعدادات الجهاز.";
+    } else if (error.name === "NotFoundError") {
+      message += "لم يتم العثور على كاميرا متاحة.";
+    } else if (error.name === "NotReadableError") {
+      message += "الكاميرا مستخدمة من تطبيق آخر. أغلقي التطبيقات التي تستخدمها.";
+    } else {
+      message += "تحققي من اتصال الإنترنت ومن وجود targets.mind بجانب index.html.";
+    }
+
+    status.textContent = message;
 
     container.style.display = "none";
     startButton.disabled = false;
@@ -625,6 +692,8 @@ async function startAR() {
 
       mindarThree = null;
     }
+
+    arStarted = false;
   }
 }
 
@@ -654,6 +723,10 @@ async function stopAR() {
 
   status.textContent = "تم إيقاف تجربة الواقع المعزز.";
 }
+
+/* تشغيل المهام عند فتح الموقع */
+renderTasks();
+
 </script>
 
 </body>
